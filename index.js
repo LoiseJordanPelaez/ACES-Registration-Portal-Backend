@@ -11,7 +11,6 @@ app.use(cors({
     origin: "https://aces-week-portal-frontend.onrender.com"
 })); // Enable CORS
 
-// Fix: Updated wildcard syntax for Express 5/path-to-regexp
 app.options("/:path*", (req, res) => {
     res.header("Access-Control-Allow-Origin", "https://aces-week-portal-frontend.onrender.com");
     res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
@@ -26,23 +25,23 @@ const dbURI = "mongodb://loisejordan:loisejordan@ac-mm1uhuf-shard-00-00.wcqt4jg.
 
 mongoose 
     .connect(dbURI) 
-    .then(() => console.log("MongoDB Connected Successfully")) // Success log
+    .then(() => console.log("MongoDB Connected Successfully"))
     .catch((error) => {
-        console.error("MongoDB Connection Error:", error.message); // Error log
+        console.error("MongoDB Connection Error:", error.message);
         process.exit(1); 
     });
 
 // --- ROUTES ---
 app.get('/', (req, res) => {
     res.send("ACES Week Portal API is online.");
-}); // Health check
+});
 
-const submitForm = require('./API/submit'); // Import route
-app.use("/submit", submitForm); // Mount route
+const submitForm = require('./API/submit'); 
+app.use("/submit", submitForm); 
 
 // --- START SERVER ---
-const PORT = process.env.PORT || 8080; // Assign port
+const PORT = process.env.PORT || 8080; 
 
 server.listen(PORT, '0.0.0.0', () => {
     console.log(`Server is running on port ${PORT}`);
-}); // Start server
+});
