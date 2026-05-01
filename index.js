@@ -4,6 +4,12 @@ const cors = require("cors");
 
 const app = express();
 
+app.get('/', (req, res) => {
+  res.send('Server is running successfully!');
+});
+app.listen(3000, () => {
+  console.log('Server started on port 3000');
+});
 // --- MIDDLEWARE ---
 // Allows your React frontend to communicate with this backend
 app.use(cors()); 
