@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 // 1. Import your Mongoose model (ensure the path matches your folder structure)
-const Form = require("../models/form"); 
+const Form = require("../Models/form"); 
 
 router.post("/", async (req, res) => {
     try {
