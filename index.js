@@ -11,7 +11,8 @@ app.use(cors({
     origin: "https://aces-week-portal-frontend.onrender.com"
 })); // Enable CORS
 
-app.options("/:path*", (req, res) => {
+// Use Regex literal to bypass Express 5 / path-to-regexp string errors
+app.options(/.* / , (req, res) => {
     res.header("Access-Control-Allow-Origin", "https://aces-week-portal-frontend.onrender.com");
     res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
     res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
@@ -25,23 +26,23 @@ const dbURI = "mongodb://loisejordan:loisejordan@ac-mm1uhuf-shard-00-00.wcqt4jg.
 
 mongoose 
     .connect(dbURI) 
-    .then(() => console.log("MongoDB Connected Successfully"))
+    .then(() => console.log("Connected to MongoDB Atlas (ACES Database)")) // Success log
     .catch((error) => {
-        console.error("MongoDB Connection Error:", error.message);
+        console.error("MongoDB Connection Error:", error.message); // Error log
         process.exit(1); 
     });
 
 // --- ROUTES ---
 app.get('/', (req, res) => {
     res.send("ACES Week Portal API is online.");
-});
+}); // Health check
 
-const submitForm = require('./API/submit'); 
-app.use("/submit", submitForm); 
+const submitForm = require('./API/submit'); // Import route
+app.use("/submit", submitForm); // Mount route
 
 // --- START SERVER ---
-const PORT = process.env.PORT || 8080; 
+const PORT = process.env.PORT || 8080; // Assign port
 
 server.listen(PORT, '0.0.0.0', () => {
     console.log(`Server is running on port ${PORT}`);
-});
+}); // Start server
