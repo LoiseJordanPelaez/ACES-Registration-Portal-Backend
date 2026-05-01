@@ -4,36 +4,27 @@ const cors = require("cors");
 
 const app = express();
 
-app.get('/', (req, res) => {
-  res.send('Server is running successfully!');
-});
-app.listen(3000, () => {
-  console.log('Server started on port 3000');
-});
 // --- MIDDLEWARE ---
-// Allows your React frontend to communicate with this backend
-app.use(cors()); 
-// Allows Express to read JSON data sent from the frontend
-app.use(express.json()); 
+app.use(cors()); // Enable CORS
+app.use(express.json()); // Parse JSON
 
 // --- DATABASE CONNECTION ---
-// Your specific Atlas connection string
 const dbURI = "mongodb://loisejordan:loisejordan@ac-mm1uhuf-shard-00-00.wcqt4jg.mongodb.net:27017,ac-mm1uhuf-shard-00-01.wcqt4jg.mongodb.net:27017,ac-mm1uhuf-shard-00-02.wcqt4jg.mongodb.net:27017/?ssl=true&replicaSet=atlas-7hiqsm-shard-0&authSource=admin&appName=loisejordan";
 
-mongoose.connect(dbURI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-})
-.then(() => console.log("Connected to MongoDB Atlas (ACES Database)"))
-.catch((err) => console.error("MongoDB Connection Error:", err));
+mongoose.connect(dbURI)
+.then(() => console.log("Connected to MongoDB Atlas (ACES Database)")) // Success log
+.catch((err) => console.error("MongoDB Connection Error:", err)); // Error log
 
 // --- ROUTES ---
-const submitRoute = require("./API/submit");
-// All post requests to /submit will be handled by submit.js
-app.use("/submit", submitRoute); 
+app.get('/', (req, res) => {
+  res.send('Server is running successfully!'); // Health check
+});
+
+const submitRoute = require("./API/submit"); // Import route
+app.use("/submit", submitRoute); // Mount route
 
 // --- SERVER START ---
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 8080; // Assign port
 app.listen(PORT, () => {
-    console.log(`ACES Backend Server is running on port ${PORT}`);
+    console.log(`ACES Backend Server is running on port ${PORT}`); // Start server
 });
