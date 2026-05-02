@@ -1,77 +1,24 @@
-const express = require("express");
-const router = express.Router();
-const Form = require("../Models/form");
-
-// POST /submit
 router.post("/", async (req, res) => {
+  console.log("📥 Incoming Data:", req.body); // Check if this prints in your console!
+
   try {
     const data = req.body;
 
-    // ✅ REQUIRED FIELDS CHECK
-    const requiredFields = [
-      "mainCategory",
-      "subCategory",
-      "name",
-      "section",
-      "team",
-      "contact",
-      "gmail",
-      "submissionLink"
-    ];
-
+    // 1. Validation Logic (Keep your existing checks here...)
+    const requiredFields = ["mainCategory", "subCategory", "name", "section", "team", "contact", "gmail", "submissionLink"];
     for (let field of requiredFields) {
       if (!data[field] || data[field].toString().trim() === "") {
-        return res.status(400).json({
-          message: `Missing required field: ${field}`
-        });
+        console.log(`⚠️ Validation Failed: Missing ${field}`);
+        return res.status(400).json({ message: `Missing required field: ${field}` });
       }
     }
 
-    // ✅ CONTACT VALIDATION (PH format)
-    if (!/^\+639\d{9}$/.test(data.contact)) {
-      return res.status(400).json({
-        message: "Invalid contact number format. Use +639XXXXXXXXX"
-      });
-    }
+    // 2. Create the Document
+    const newEntry = new Form(data); // Mongoose will ignore fields not in Schema
 
-    // ✅ EMAIL VALIDATION
-    if (!data.gmail.toLowerCase().endsWith("@gmail.com")) {
-      return res.status(400).json({
-        message: "Only @gmail.com emails are allowed"
-      });
-    }
-
-    // ✅ CREATE DOCUMENT
-    const newEntry = new Form({
-      mainCategory: data.mainCategory,
-      subCategory: data.subCategory,
-      groupType: data.groupType || "",
-
-      name: data.name,
-      section: data.section,
-      team: data.team,
-      contact: data.contact,
-      gmail: data.gmail,
-
-      role: data.role || "",
-      position: data.position || "",
-      jersey: data.jersey || "",
-      matchType: data.matchType || "",
-      ign: data.ign || "",
-      esportsRole: data.esportsRole || "",
-      bandName: data.bandName || "",
-      instrument: data.instrument || "",
-      artType: data.artType || "",
-      quizCategory: data.quizCategory || "",
-      essayLanguage: data.essayLanguage || "",
-
-      submissionLink: data.submissionLink
-    });
-
-    // ✅ SAVE TO MONGODB
+    // 3. Save
     const saved = await newEntry.save();
-
-    console.log("✅ SAVED:", saved._id);
+    console.log("✅ Database Save Successful:", saved._id);
 
     res.status(201).json({
       message: "🏆 Registration saved successfully!",
@@ -79,13 +26,7 @@ router.post("/", async (req, res) => {
     });
 
   } catch (error) {
-    console.error("❌ ERROR:", error);
-
-    res.status(500).json({
-      message: "Server error",
-      error: error.message
-    });
+    console.error("❌ Mongoose Error:", error.message);
+    res.status(500).json({ message: "Server error", error: error.message });
   }
 });
-
-module.exports = router;
